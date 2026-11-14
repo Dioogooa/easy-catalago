@@ -55,11 +55,11 @@ model Store {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  owner    User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  products Product[]
+  owner      User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  products   Product[]
   categories Category[]
-  settings StoreSettings?
-  events   CatalogEvent[]
+  settings   StoreSettings?
+  events     CatalogEvent[]
 
   @@index([slug])
   @@index([status])
@@ -102,8 +102,8 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  store    Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  category Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  store    Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  category Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   events   CatalogEvent[]
 
   @@unique([storeId, slug])
@@ -115,28 +115,28 @@ model Product {
 }
 
 model StoreSettings {
-  id                 String   @id @default(cuid())
-  storeId            String   @unique
+  id               String   @id @default(cuid())
+  storeId          String   @unique
   // Identidade visual
-  primaryColor       String   @default("#000000")
-  secondaryColor     String   @default("#ffffff")
-  backgroundColor    String   @default("#f9f9f9")
-  textColor          String   @default("#111111")
+  primaryColor     String   @default("#000000")
+  secondaryColor   String   @default("#ffffff")
+  backgroundColor  String   @default("#f9f9f9")
+  textColor        String   @default("#111111")
   // Hero
-  heroImageKey       String?
-  heroTitle          String?
-  heroDescription    String?
-  heroButtonLabel    String?
-  heroButtonTarget   String?
-  showHero           Boolean  @default(true)
+  heroImageKey     String?
+  heroTitle        String?
+  heroDescription  String?
+  heroButtonLabel  String?
+  heroButtonTarget String?
+  showHero         Boolean  @default(true)
   // Vitrine
-  showCategories     Boolean  @default(true)
+  showCategories   Boolean  @default(true)
   // WhatsApp
-  whatsappNumber     String?
-  whatsappGreeting   String   @default("Olá! Gostaria de fazer um pedido:")
-  whatsappClosing    String   @default("Aguardo confirmação. Obrigado!")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  whatsappNumber   String?
+  whatsappGreeting String   @default("Olá! Gostaria de fazer um pedido:")
+  whatsappClosing  String   @default("Aguardo confirmação. Obrigado!")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 

@@ -7,7 +7,7 @@ import type { NextRequest } from 'next/server'
 const PROTECTED_ROUTES = ['/admin']
 const AUTH_ROUTES = ['/login', '/cadastro']
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // TODO Fase 1: verificar sessão do Auth.js e redirecionar

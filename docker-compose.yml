@@ -8,11 +8,11 @@ services:
       POSTGRES_PASSWORD: easycatalago
       POSTGRES_DB: easycatalago_dev
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U easycatalago -d easycatalago_dev"]
+      test: [ "CMD-SHELL", "pg_isready -U easycatalago -d easycatalago_dev" ]
       interval: 10s
       timeout: 5s
       retries: 5
