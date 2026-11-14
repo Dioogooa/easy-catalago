@@ -1,0 +1,163 @@
+// Easy Catalago - Prisma Schema
+// Fase 0: Modelagem inicial completa
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────────────────────
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum EventType {
+  CATALOG_VIEW
+  PRODUCT_VIEW
+  ADD_TO_CART
+  WHATSAPP_REDIRECT
+  CART_SUBMIT
+}
+
+// ─────────────────────────────────────────────────────────────
+// Models
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  store Store?
+
+  @@map("users")
+}
+
+model Store {
+  id          String   @id @default(cuid())
+  ownerId     String   @unique
+  name        String
+  slug        String   @unique
+  description String?
+  logoKey     String?
+  status      Status   @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner    User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  products Product[]
+  categories Category[]
+  settings StoreSettings?
+  events   CatalogEvent[]
+
+  @@index([slug])
+  @@index([status])
+  @@map("stores")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  storeId     String
+  name        String
+  slug        String
+  description String?
+  imageKey    String?
+  status      Status   @default(ACTIVE)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  store    Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+  @@index([storeId, status])
+  @@index([storeId, position])
+  @@map("categories")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  storeId     String
+  categoryId  String?
+  name        String
+  slug        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  imageKey    String?
+  status      Status   @default(ACTIVE)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  store    Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  category Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  events   CatalogEvent[]
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+  @@index([storeId, status])
+  @@index([storeId, categoryId])
+  @@index([storeId, position])
+  @@map("products")
+}
+
+model StoreSettings {
+  id                 String   @id @default(cuid())
+  storeId            String   @unique
+  // Identidade visual
+  primaryColor       String   @default("#000000")
+  secondaryColor     String   @default("#ffffff")
+  backgroundColor    String   @default("#f9f9f9")
+  textColor          String   @default("#111111")
+  // Hero
+  heroImageKey       String?
+  heroTitle          String?
+  heroDescription    String?
+  heroButtonLabel    String?
+  heroButtonTarget   String?
+  showHero           Boolean  @default(true)
+  // Vitrine
+  showCategories     Boolean  @default(true)
+  // WhatsApp
+  whatsappNumber     String?
+  whatsappGreeting   String   @default("Olá! Gostaria de fazer um pedido:")
+  whatsappClosing    String   @default("Aguardo confirmação. Obrigado!")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("store_settings")
+}
+
+model CatalogEvent {
+  id        String    @id @default(cuid())
+  storeId   String
+  productId String?
+  sessionId String
+  eventType EventType
+  metadata  Json?
+  createdAt DateTime  @default(now())
+
+  store   Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([storeId])
+  @@index([storeId, eventType])
+  @@index([storeId, createdAt])
+  @@index([productId])
+  @@map("catalog_events")
+}
