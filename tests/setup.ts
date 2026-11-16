@@ -4,6 +4,6 @@ Object.assign(process.env, {
   NODE_ENV: 'test',
   DATABASE_URL:
     process.env.TEST_DATABASE_URL ||
-    'postgresql://easycatalago:easycatalago@localhost:5433/easycatalago_test',
+    'postgresql://easycatalago:easycatalago@localhost:5436/easycatalago_test',
 })
 

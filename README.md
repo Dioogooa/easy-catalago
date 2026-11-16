@@ -90,7 +90,7 @@ cp .env.example .env
 docker compose up -d
 ```
 Isso iniciará:
-- **PostgreSQL 16**: `localhost:5432` (banco: `easycatalago_dev`)
+- **PostgreSQL 16**: `localhost:5436` (banco: `easycatalago_dev`)
 - **MinIO Object Storage**: `localhost:9000` (Console web: `localhost:9001`)
 
 ### 4. Executar Migrações e Seed do Prisma
